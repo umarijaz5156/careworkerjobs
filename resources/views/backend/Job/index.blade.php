@@ -156,6 +156,8 @@
                             <table class="ll-table table table-hover text-nowrap">
                                 <thead>
                                     <tr>
+                                        <th width="5%">{{ __('id') }}</th>
+
                                         <th width="5%">{{ __('job') }}</th>
                                         <th width="10%">{{ __('category') }}/{{ __('role') }}</th>
                                         <th width="10%">{{ __('salary') }}</th>
