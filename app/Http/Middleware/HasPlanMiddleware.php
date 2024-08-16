@@ -17,6 +17,8 @@ class HasPlanMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
+
+        
         // check previous url
         $url = str_replace(url('/'), '', url()->previous());
         $path_key = parse_url($url);
