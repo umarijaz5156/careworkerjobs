@@ -137,7 +137,7 @@
     @endif
     <!-- google adsense area end -->
     <!-- category section -->
-    <section class="tw-bg-primary-50 md:tw-py-20 tw-py-12">
+    {{-- <section class="tw-bg-primary-50 md:tw-py-20 tw-py-12">
         <div class="container">
             <div>
                 <h2>{{ __('top_categories') }}</h2>
@@ -166,7 +166,7 @@
 
             </div>
         </div>
-    </section>
+    </section> --}}
 
 
     <!-- top companaies -->
@@ -179,7 +179,7 @@
                             <div class="d-flex flex-wrap">
                                 <div class="flex-grow-1">
                                     <h4>{{ __('top') }} <span
-                                            class="text-primary-500 has-title-shape">{{ __('Councils') }}
+                                            class="text-primary-500 has-title-shape">{{ __('Organisations') }}
                                             <img src="{{ asset('frontend') }}/assets/images/all-img/title-shape.png"
                                                 alt="">
                                         </span></h4>
@@ -360,7 +360,7 @@
             <div class="container">
                 <div class="row tw-items-center">
                     <div class="col-lg-6">
-                        <img class="tw-rounded-lg" src="{{ asset('home_page.webp') }}"
+                        <img class="tw-rounded-lg" src="{{ asset('home_page.png') }}"
                             alt="jobBox">
                     </div>
                     <div class="col-lg-6">
