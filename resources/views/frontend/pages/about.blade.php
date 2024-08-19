@@ -251,11 +251,11 @@
                     </div>
                     <div class="col-md-6">
                         <div>
-                            <video  width="100%" controls>
+                            {{-- <video  width="100%" controls>
                                 <source src="{{ asset('videos/Council_Direct_revised.mp4') }}" type="video/mp4">
                                 Your browser does not support the video tag.
-                            </video>
-                            {{-- <img src="{{ $cms_setting->mission_image }}" alt="image" class="w-100"> --}}
+                            </video> --}}
+                            <img src="{{ asset('about.png') }}" alt="image" class="w-100">
                         </div>
                     </div>
                 </div>
