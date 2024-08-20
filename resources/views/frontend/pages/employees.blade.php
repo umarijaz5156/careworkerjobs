@@ -19,11 +19,11 @@
             <div class="row align-items-center ">
                 <div class="col-12 position-relative ">
                     <div class="breadcrumb-menu">
-                        <h6 class="f-size-18 m-0">{{ __('Find Councils') }}</h6>
+                        <h6 class="f-size-18 m-0">{{ __('Find Organisations') }}</h6>
                         <ul>
                             <li><a href="{{ route('website.home') }}">{{ __('home') }}</a></li>
                             <li>/</li>
-                            <li>{{ __('Councils') }}</li>
+                            <li>{{ __('Organisations') }}</li>
                         </ul>
                     </div>
                 </div>
@@ -137,7 +137,7 @@
                                         <div>
                                             <button type="submit"
                                                 class="btn btn-primary md:tw-inline-block tw-w-full tw-block">
-                                                {{ __('Search Councils') }}
+                                                {{ __('Search Organisations') }}
                                             </button>
                                         </div>
                                         <span id="autocomplete_job_results"></span> 
