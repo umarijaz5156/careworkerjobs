@@ -412,8 +412,11 @@
     <section class="tw-py-10">
         <div class="container">
 
-            <img src="{{ asset('about.png') }}" alt="image" class="w-100">
-
+            {{-- <img src="{{ asset('about.png') }}" alt="image" class="w-100"> --}}
+            <video  width="100%" controls>
+                <source src="{{ asset('videos/Care_Worker_Jobs.mp4') }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         </div>
         
     </section>
