@@ -18,6 +18,7 @@
         "dgvai/laravel-sslcommerz": "^1.0",
         "doctrine/dbal": "^3.3",
         "f9webltd/laravel-api-response-helpers": "^1.5",
+        "fabpot/goutte": "^4.0",
         "fruitcake/php-cors": "^1.2",
         "google/apiclient": "^2.12.1",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -53,6 +54,7 @@
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
         "getsolaris/laravel-make-service": "^1.1",
+        "laravel/dusk": "^8.2",
         "laravel/pint": "^1.12",
         "mockery/mockery": "^1.3.1",
         "nunomaduro/collision": "^7.0",

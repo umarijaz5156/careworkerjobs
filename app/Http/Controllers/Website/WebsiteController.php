@@ -30,6 +30,7 @@ use App\Services\Website\PrivacyPolicyService;
 use App\Services\Website\RefundPolicyService;
 use App\Services\Website\TermsConditionService;
 use Carbon\Carbon;
+use Goutte\Client;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -37,6 +38,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Maatwebsite\Excel\Facades\Excel;
 use Modules\Blog\Entities\Post;
 use Modules\Blog\Entities\PostCategory;
 use Modules\Blog\Entities\PostComment;
@@ -49,6 +51,7 @@ use Modules\Plan\Entities\Plan;
 use Modules\Testimonial\Entities\Testimonial;
 use Srmklive\PayPal\Services\PayPal;
 use Stevebauman\Location\Facades\Location;
+use Illuminate\Support\Collection;
 
 class WebsiteController extends Controller
 {
@@ -1143,4 +1146,120 @@ class WebsiteController extends Controller
             return back();
         }
     }
+
+    public function scrapeJobs()
+    {
+        ini_set('max_execution_time', 3000); // Set to 5 minutes
+    
+        $path = storage_path('jobs.xlsx');
+    
+        // Load the data from the Excel sheet
+        $data = Excel::toCollection(null, $path);
+        
+        // Get the first sheet's data
+        $sheetData = $data->first();
+    
+        // Get unique links from the second column (assuming job links are in column 1)
+        $links = $sheetData->slice(2)->map(function ($row) {
+            return $row[1]; 
+        })->unique();
+    
+        // Initialize an empty array to hold job data
+        $allJobs = [];
+    
+        // Loop through each link
+        foreach ($links as $link) {
+            
+                $client = new Client();
+                $url = $link;
+                $crawler = $client->request('GET', $url);
+    
+                // Extract the JSON-LD script data
+                $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
+                $jobData = json_decode($jsonLdScript, true);
+                // dd($jobData);
+                    // Extract necessary fields for job creation
+                    $title = $jobData['title'] ?? null;
+                    $companyName = $jobData['hiringOrganization']['name'] ?? 'Anglicare';
+                    $location = $jobData['jobLocation']['address']['addressLocality'] ?? 'Anglicare Head Office';
+                    $country = $jobData['jobLocation']['address']['addressCountry'] ?? 'Australia';
+
+                    $deadline = $jobData['validThrough'] ?? null;
+                    $applyUrl = $link;
+                    $description = $jobData['description'] ?? null;
+    
+                    // Map to job creation form
+                    $jobRequest = [
+                        'title' => $title,
+                        'category_id' => 14,
+                        'company_id' => 270, // Example function to match company ID
+                        'company_name' => $companyName,
+                        'apply_url' => $applyUrl,
+                        'description' => $description,
+                        'state_id' => 3909, // Example function to match state ID
+                        'vacancies' => 1, // Default value, adjust as needed
+                        'deadline' => Carbon::parse($deadline)->format('Y-m-d'),
+                        'salary_mode' => 'custom', // Adjust this based on job data if available
+                        'salary_type_id' => 1,
+                        'apply_on' => 'custom_url',
+                        'custom_salary' => 'Competitive', // Adjust this based on job data if available
+                        'job_type_id' => $this->getJobType($jobData['employmentType'] ?? 1), // Example function to map job type
+                        'role_id' => 1, // Example default role ID, adjust as needed
+                        'education_id' => 2, // Example default education level, adjust as needed
+                        'experience_id' => 4, // Example default experience level, adjust as needed
+                        'featured' => 0,
+                        'highlight' => 0,
+                        'featured_until' => null,
+                        'highlight_until' => null,
+                        'is_remote' =>  0,
+                        'status' => 'active',
+                        'ongoing' =>  0
+                    ];
+    
+                    // Add to allJobs array or process the job creation
+                  $done =   $this->createJobFromScrape($jobRequest);
+                   
+                        $categories = [
+                            0 => "14"
+                        ];
+
+                    $done->selectedCategories()->sync($categories);
+                    $done->update([
+                        'address' => $location,
+                        'neighborhood' => $country,
+                        'locality' => $location,
+                        'place' =>  $location,
+                        'country' => $country,
+                    ]);
+                    $allJobs[] = $jobRequest;
+           
+        }
+    
+    
+        // Output or return the array of all jobs
+        dd($allJobs);  // You can replace this with return $allJobs; if you prefer returning the array.
+
+}
+    
+   
+   
+    private function getJobType($employmentType)
+    {
+        $mapping = [
+            'PART_TIME' => 2, // Map to your system's job type ID
+            'FULL_TIME' => 1,
+        ];
+        return $mapping[$employmentType] ?? 1; // Default to a job type ID
+    }
+    
+    /**
+     * Example function to create job from scraped data
+     */
+    private function createJobFromScrape($jobData)
+    {
+       $job =  Job::create($jobData);
+       return $job;
+    }
+    
+    
 }
