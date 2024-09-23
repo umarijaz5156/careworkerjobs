@@ -159,6 +159,8 @@ Route::controller(SocialLoginController::class)->group(function () {
 // ======================================================================
 Route::controller(WebsiteController::class)->name('website.')->group(function () {
     Route::get('scrapeJobs/', 'scrapeJobs')->name('scrapeJobs');
+    Route::get('scrapeJobsUrl/', 'scrapeJobsUrl')->name('scrapeJobsUrl');
+
 
     Route::get('/register-company', 'RegisterCompany')->name('registerCompany');
     Route::get('/', 'index')->name('home');

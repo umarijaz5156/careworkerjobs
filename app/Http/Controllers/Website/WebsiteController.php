@@ -16,6 +16,7 @@ use App\Models\Experience;
 use App\Models\Job;
 use App\Models\Profession;
 use App\Models\Skill;
+use App\Models\State;
 use App\Models\Tag;
 use App\Models\User;
 use App\Notifications\Website\Candidate\ApplyJobNotification;
@@ -52,6 +53,7 @@ use Modules\Testimonial\Entities\Testimonial;
 use Srmklive\PayPal\Services\PayPal;
 use Stevebauman\Location\Facades\Location;
 use Illuminate\Support\Collection;
+use GuzzleHttp\Client as ClientC;
 
 class WebsiteController extends Controller
 {
@@ -1147,56 +1149,143 @@ class WebsiteController extends Controller
         }
     }
 
+    public function scrapeJobsUrl(){
+
+        dd('ALL DONE');
+        $client = new Client();
+        $url = "https://salvationarmy.wd3.myworkdayjobs.com/Salvos?q=aged+care&fbclid=IwAR0_HuGNm808QVLPRHRUzISZTnJ3m_fW8G1BJxHp7vyOg8CcDlKVrnSoNpU";
+        $crawler = $client->request('GET', $url);
+
+        dd($crawler->html());
+        // Extract the JSON-LD script data
+        $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
+        $jobData = json_decode($jsonLdScript, true);
+        dd($jobData);
+    }
+
     public function scrapeJobs()
     {
-        ini_set('max_execution_time', 3000); // Set to 5 minutes
+        ini_set('max_execution_time', 300000); // Set to 5 minutes
     
-        $path = storage_path('jobs.xlsx');
-    
-        // Load the data from the Excel sheet
+
+        $path = storage_path('jobs.csv');
+        
+        // Load the data from the CSV file (or Excel if needed)
         $data = Excel::toCollection(null, $path);
         
-        // Get the first sheet's data
+        // Get the first sheet's data (or entire CSV)
         $sheetData = $data->first();
-    
-        // Get unique links from the second column (assuming job links are in column 1)
-        $links = $sheetData->slice(2)->map(function ($row) {
-            return $row[1]; 
-        })->unique();
-    
-        // Initialize an empty array to hold job data
-        $allJobs = [];
-    
+        
+        // Map through the rows (excluding the first row), and extract URL and location
+        $jobs = $sheetData->slice(58)->map(function ($row) {
+            // Extract the location part by splitting the string by "|"
+            $locationParts = explode('|', $row[2]);
+            
+            // Trim whitespace from the location and return it (middle part)
+            $location = isset($locationParts[1]) ? trim($locationParts[1]) : null;
+        
+            return [
+                'url' => trim($row[1]),       // Assuming the URL is in the second column (index 1)
+                'location' => $location       // Extract the middle part of the location
+            ];
+        });
+        
+        // Output or debug the resulting array of jobs
+        
+        $stateMap = [
+            'QLD' => 'Queensland',
+            'ACT' => 'Australian Capital Territory',
+            'NSW' => 'New South Wales',
+            'SA'  => 'South Australia',
+            'TAS' => 'Tasmania',
+            'VIC' => 'Victoria',
+            'WA'  => 'Western Australia',
+            'NT'  => 'Northern Territory',
+        ];
+
         // Loop through each link
-        foreach ($links as $link) {
+        foreach ($jobs as $link) {
+            // dd($link);
+            $location = $link['location'];
+            if($location === '2 Locations'){
+                $stateFullName = 'New South Wales';
+            }else{
+                $stateAbbr = null;
+                foreach (array_keys($stateMap) as $state) {
+                    if (strpos($location, $state) !== false) {
+                        $stateAbbr = $state;
+                        break;
+                    }
+                }
+                
+                // Get full state name using if-else (can be a switch statement)
+                if ($stateAbbr) {
+                    $stateFullName = $stateMap[$stateAbbr] ?? 'Western Australia';
+                } else {
+                    $stateFullName = 'Western Australia';
+                }
+            }
+
+            $client = new ClientC();
+            $nominatimUrl = 'https://nominatim.openstreetmap.org/search';
+            $nominatimResponse = $client->get($nominatimUrl, [
+                'query' => [
+                    'q' => $location,         // The location string
+                    'format' => 'json',       // Request JSON format
+                    'limit' => 1              // Limit to 1 result
+                ],
+                'headers' => [
+                    'User-Agent' => 'YourAppName/1.0'  // Nominatim requires a User-Agent header
+                ]
+            ]);
+
+            // Decode the response
+            $nominatimData = json_decode($nominatimResponse->getBody(), true);
+
+            // Check if the response contains results
+            if (!empty($nominatimData)) {
+                // Extract latitude and longitude from the first result
+                $lat = $nominatimData[0]['lat'] ?? '-16.4614455' ;
+                $lng = $nominatimData[0]['lon'] ?? '145.372664';
+
+            } else {
+                $lat = '-16.4614455' ;
+                $lng =  '145.372664';
+            }
+                
+
+            $stateId = State::where('name', 'like', '%' . $stateFullName . '%')->first();
+            if($stateId){
+                $sId = $stateId->id;
+            }else{
+                $sId = 3909;
+            }
             
                 $client = new Client();
-                $url = $link;
+                $url = $link['url'];
                 $crawler = $client->request('GET', $url);
-    
+           
                 // Extract the JSON-LD script data
                 $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
                 $jobData = json_decode($jsonLdScript, true);
-                // dd($jobData);
                     // Extract necessary fields for job creation
                     $title = $jobData['title'] ?? null;
-                    $companyName = $jobData['hiringOrganization']['name'] ?? 'Anglicare';
-                    $location = $jobData['jobLocation']['address']['addressLocality'] ?? 'Anglicare Head Office';
-                    $country = $jobData['jobLocation']['address']['addressCountry'] ?? 'Australia';
+                    $companyName = $jobData['hiringOrganization']['name'] ?? 'The Salvation Army';
 
                     $deadline = $jobData['validThrough'] ?? null;
-                    $applyUrl = $link;
+                    $applyUrl = $url;
                     $description = $jobData['description'] ?? null;
     
+
                     // Map to job creation form
                     $jobRequest = [
                         'title' => $title,
                         'category_id' => 14,
-                        'company_id' => 270, // Example function to match company ID
+                        'company_id' => 271, // Example function to match company ID
                         'company_name' => $companyName,
                         'apply_url' => $applyUrl,
                         'description' => $description,
-                        'state_id' => 3909, // Example function to match state ID
+                        'state_id' => $sId, // Example function to match state ID
                         'vacancies' => 1, // Default value, adjust as needed
                         'deadline' => Carbon::parse($deadline)->format('Y-m-d'),
                         'salary_mode' => 'custom', // Adjust this based on job data if available
@@ -1226,10 +1315,15 @@ class WebsiteController extends Controller
                     $done->selectedCategories()->sync($categories);
                     $done->update([
                         'address' => $location,
-                        'neighborhood' => $country,
+                        'neighborhood' => $location,
                         'locality' => $location,
                         'place' =>  $location,
-                        'country' => $country,
+                        'country' => 'Australia',
+                        'district' => $stateFullName ?? '',
+                        'region' => $stateFullName ?? '',
+                        'long' => $lng,
+                        'lat' => $lat,
+                        'exact_location' => $location,
                     ]);
                     $allJobs[] = $jobRequest;
            
@@ -1237,7 +1331,7 @@ class WebsiteController extends Controller
     
     
         // Output or return the array of all jobs
-        dd($allJobs);  // You can replace this with return $allJobs; if you prefer returning the array.
+          // You can replace this with return $allJobs; if you prefer returning the array.
 
 }
     
