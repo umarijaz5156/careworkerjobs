@@ -49,6 +49,8 @@
         "stevebauman/location": "^6.5",
         "stichoza/google-translate-php": "^4.1",
         "stripe/stripe-php": "^7.119",
+        "symfony/browser-kit": "^6.4",
+        "symfony/dom-crawler": "^6.4",
         "torann/geoip": "^3.0"
     },
     "require-dev": {
