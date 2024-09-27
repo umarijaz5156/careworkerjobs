@@ -1152,7 +1152,7 @@ class WebsiteController extends Controller
 
     public function scrapeJobsUrl(){
 
-     
+        dd('all done');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
 
@@ -1326,7 +1326,7 @@ class WebsiteController extends Controller
            
         }
     
-        dd('all done');
+       
         // Output or return the array of all jobs
           // You can replace this with return $allJobs; if you prefer returning the array.
       
