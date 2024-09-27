@@ -1266,6 +1266,12 @@ class WebsiteController extends Controller
                     $applyUrl = $url;
                     $description = $description ?? null;
 
+                    try {
+                        $formattedDeadline = Carbon::parse($deadline)->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        $formattedDeadline = '2024-10-25'; // Default date
+                    }
+
                     // Map to job creation form
                     $jobRequest = [
                         'title' => $title,
@@ -1276,7 +1282,7 @@ class WebsiteController extends Controller
                         'description' => $description,
                         'state_id' => $sId,
                         'vacancies' => 1,
-                        'deadline' => Carbon::parse($deadline)->format('Y-m-d'),
+                        'deadline' => $formattedDeadline,
                         'salary_mode' => 'custom', 
                         'salary_type_id' => 1,
                         'apply_on' => 'custom_url',
