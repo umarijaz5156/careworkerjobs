@@ -1163,7 +1163,7 @@ class WebsiteController extends Controller
         $sheetData = $data->first();
         
         // Map through the rows (excluding the first row), and extract URL and location
-        $jobs = $sheetData->slice(59)->map(function ($row) {
+        $jobs = $sheetData->slice(117)->map(function ($row) {
             
            
                 $location = $row[2];
