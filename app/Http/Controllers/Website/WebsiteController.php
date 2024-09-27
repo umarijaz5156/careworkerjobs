@@ -1164,43 +1164,36 @@ class WebsiteController extends Controller
         
         // Map through the rows (excluding the first row), and extract URL and location
         $jobs = $sheetData->slice(1)->map(function ($row) {
-                        // Assuming $row[3] contains the location information
-                $locationString = $row[3];
-
-                // Split the location string by commas to get individual locations
-                $locations = explode(',', $locationString);
-
-                $lastLocation = trim(end($locations));
-               
-                if($lastLocation === 'Various locations - Australia wide'){
-                    $lastLocation = 'Australia';
-                }else if($lastLocation === 'Geelong or Canberra'){
-                    $lastLocation = 'Geelong';
-                }else if ($lastLocation === 'VIC - Richmond'){
-                    $lastLocation = 'Richmond';
-                }else if($lastLocation === 'Flexible working arrangements available and opportunity for virtual work'){
-                    $lastLocation = 'Australia';
-                }else if($lastLocation === 'WA - Rockingham'){
-                    $lastLocation = 'Rockingham';
-                }else if ($lastLocation === 'WA - Perth'){
-                    $lastLocation = 'Perth';
-                }else if ($lastLocation === 'Access to Salary Packaging │Wellbeing Support incl. EAP & Gym Membership'){
-                    $lastLocation = 'Australia';
-                }else if ($lastLocation === 'Access to Salary Packaging │Wellbeing Support incl. EAP & Gym Memberships'){
-                    $lastLocation = 'Australia';
-                }else if ($lastLocation === 'WA - Warwick Grove'){
-                    $lastLocation = 'Warwick Grove';
-                }else if ($lastLocation === 'WA - Midland'){
-                    $lastLocation = 'midland australia';
-                }else{
-                    $lastLocation = 'Australia';
-                }
+            
            
+                $location = $row[2];
+                 $city = explode(',', $location)[0];
+                          
+                 $deadlineString = $row[6]; // Adjust this to the correct index
+
+                $deadline = str_replace('Closing on: ', '', $deadlineString);
+                $state = $row[3];
+
+                $stateMap = [
+                    'QLD' => 'Queensland',
+                    'ACT' => 'Australian Capital Territory',
+                    'NSW' => 'New South Wales',
+                    'SA'  => 'South Australia',
+                    'TAS' => 'Tasmania',
+                    'VIC' => 'Victoria',
+                    'WA'  => 'Western Australia',
+                    'NT'  => 'Northern Territory',
+                ];
+
+                $fullState = $stateMap[$state] ?? 'Australian Capital Territory';
+
                 return [
-                    'location' => $lastLocation,
+                    'location' => $location,
                     'job_title' => $row[0],
                     'url' => $row[1],
-            
+                    'city' => $city,
+                    'deadline' => $deadline,
+                    'state' => $fullState,
                 ];         
             
         });
@@ -1208,92 +1201,68 @@ class WebsiteController extends Controller
        
         // Output or debug the resulting array of jobs
         
-        $stateMap = [
-            'QLD' => 'Queensland',
-            'ACT' => 'Australian Capital Territory',
-            'NSW' => 'New South Wales',
-            'SA'  => 'South Australia',
-            'TAS' => 'Tasmania',
-            'VIC' => 'Victoria',
-            'WA'  => 'Western Australia',
-            'NT'  => 'Northern Territory',
-        ];
+
        
         // Loop through each link
         foreach ($jobs as $link) {
            
 
-               
-               $stateFullName = 'Australian Capital Territory';
-               
-
+             
+                $stateFullName = $link['state'];
                 $location =  $link['location'];
-                $city =  $link['location'];
-
-                
-           
+                $city =  $link['city'];
+                $deadline = $link['deadline'];
+                $title = $link['job_title'];
+                $url = $link['url'];
         
             
             $client = new ClientC();
             $nominatimUrl = 'https://nominatim.openstreetmap.org/search';
             $nominatimResponse = $client->get($nominatimUrl, [
                 'query' => [
-                    'q' => $location,         // The location string
-                    'format' => 'json',       // Request JSON format
-                    'limit' => 1              // Limit to 1 result
+                    'q' => $location,         
+                    'format' => 'json',       
+                    'limit' => 1              
                 ],
                 'headers' => [
-                    'User-Agent' => 'YourAppName/1.0'  // Nominatim requires a User-Agent header
+                    'User-Agent' => 'YourAppName/1.0'  
                 ]
             ]);
 
-            // Decode the response
             $nominatimData = json_decode($nominatimResponse->getBody(), true);
           
-            // Check if the response contains results
             if (!empty($nominatimData)) {
-                // Extract latitude and longitude from the first result
                 $lat = $nominatimData[0]['lat'] ?? '-16.4614455' ;
                 $lng = $nominatimData[0]['lon'] ?? '145.372664';
+                $exact_location = $nominatimData[0]['display_name'] ?? $location;
 
             } else {
                 $lat = '-16.4614455' ;
                 $lng =  '145.372664';
+                $exact_location = $location;
+
             }
                 
             
-            $stateId = State::where('name', 'like', '%' . $stateFullName . '%')->first();
-            if($stateId){
-                $sId = $stateId->id;
-            }else{
-                $sId = 3909;
-            }
+                $stateId = State::where('name', 'like', '%' . $stateFullName . '%')->first();
+                if($stateId){
+                    $sId = $stateId->id;
+                }else{
+                    $sId = 3909;
+                }
             
                 $client = new Client();
-                $url = $link['url'];
+                sleep(1);
                 $crawler = $client->request('GET', $url);
-
-                $content = $crawler->filter('.cp_content')->html();
-                $innerCrawler = new Crawler($content);
-
-                $innerCrawler->filter('img')->last()->each(function ($node) {
-                    $node->getNode(0)->parentNode->removeChild($node->getNode(0));
-                });
-
                
-                $modifiedContent = $innerCrawler->html();
-
-                $modifiedContent = preg_replace('/<body[^>]*>(.*?)<\/body>/is', '$1', $modifiedContent);
-
-                $description = $modifiedContent;
- 
-                // $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
-                // $jobData = json_decode($jsonLdScript, true);
+                $content = $crawler->filter('.job-description')->html();
                 
-                    $title = $link['job_title'] ?? null;
-                    $companyName = 'National Disability Insurance Agency';
+               
+                $description = $content;
+ 
+              
+                    $companyName = 'calvarycare';
 
-                    $deadline = '2024-10-10';
                     $applyUrl = $url;
                     $description = $description ?? null;
 
@@ -1301,21 +1270,21 @@ class WebsiteController extends Controller
                     $jobRequest = [
                         'title' => $title,
                         'category_id' => 14,
-                        'company_id' => 271, // Example function to match company ID
+                        'company_id' => 278,
                         'company_name' => $companyName,
                         'apply_url' => $applyUrl,
                         'description' => $description,
-                        'state_id' => $sId, // Example function to match state ID
-                        'vacancies' => 1, // Default value, adjust as needed
+                        'state_id' => $sId,
+                        'vacancies' => 1,
                         'deadline' => Carbon::parse($deadline)->format('Y-m-d'),
-                        'salary_mode' => 'custom', // Adjust this based on job data if available
+                        'salary_mode' => 'custom', 
                         'salary_type_id' => 1,
                         'apply_on' => 'custom_url',
-                        'custom_salary' => 'Competitive', // Adjust this based on job data if available
-                        'job_type_id' => 1, // Example function to map job type
-                        'role_id' => 1, // Example default role ID, adjust as needed
-                        'education_id' => 2, // Example default education level, adjust as needed
-                        'experience_id' => 4, // Example default experience level, adjust as needed
+                        'custom_salary' => 'Competitive', 
+                        'job_type_id' => 1, 
+                        'role_id' => 1, 
+                        'education_id' => 2, 
+                        'experience_id' => 4, 
                         'featured' => 0,
                         'highlight' => 0,
                         'featured_until' => null,
@@ -1334,7 +1303,7 @@ class WebsiteController extends Controller
 
                     $done->selectedCategories()->sync($categories);
                     $done->update([
-                        'address' => $location,
+                        'address' => $exact_location,
                         'neighborhood' => $location,
                         'locality' => $city,
                         'place' =>  $city,
@@ -1343,10 +1312,10 @@ class WebsiteController extends Controller
                         'region' => $stateFullName ?? '',
                         'long' => $lng,
                         'lat' => $lat,
-                        'exact_location' => $location,
+                        'exact_location' => $exact_location,
                     ]);
 
-                   
+                 
                     $allJobs[] = $jobRequest;
            
         }
