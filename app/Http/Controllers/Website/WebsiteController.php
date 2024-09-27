@@ -1153,7 +1153,7 @@ class WebsiteController extends Controller
     public function scrapeJobsUrl(){
 
      
-        ini_set('max_execution_time', 300000); // Set to 5 minutes
+        ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
 
         $path = storage_path('jobs.csv');
@@ -1163,7 +1163,7 @@ class WebsiteController extends Controller
         $sheetData = $data->first();
         
         // Map through the rows (excluding the first row), and extract URL and location
-        $jobs = $sheetData->slice(1)->map(function ($row) {
+        $jobs = $sheetData->slice(59)->map(function ($row) {
             
            
                 $location = $row[2];
