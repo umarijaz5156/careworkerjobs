@@ -21,7 +21,7 @@
         <div class="container">
             <div class="tw-flex tw-justify-center tw-items-center tw-relative tw-z-50">
                 <div class="tw-max-w-3xl tw-text-white tw-text-center">
-                    <h1 class="tw-text-white">{!! __('no_1_job_portal_home_3') !!}</h1>
+                    <h1 class="tw-text-white">{!! __('Find Care Worker Jobs in Australia') !!}</h1>
                     <p>{{ __('job_seekers_stats') }}</p>
                     <form action="{{ route('website.job') }}" method="GET" id="job_search_form">
                         <div class="jobsearchBox d-flex flex-column flex-md-row bg-gray-10 input-transparent rt-mb-24"
@@ -168,6 +168,27 @@
         </div>
     </section> --}}
 
+</section>
+
+    <section class="bg-light rounded shadow-sm md:tw-py-20 tw-py-12">
+        <div class="container">
+            <div class="tw-mt-8 tw-relative tw-z-50">
+                <div class="row justify-content-center">
+                    <div class="col-md-12 ">
+                        <div class="" style="font-size: 1.2rem;">
+                        <p>
+                            You want to start a career as a care worker in Australia? Care Worker Jobs is a great platform for finding a job in this field. Care workers maintain the clients health in their homes.They support them in daily activities of life and help them in maintaining the house. A care worker can perform different roles and it depends on their field of specialization. Care Worker Jobs in Australia covers roles like aged care, disability support, and home care services. 
+                            <p>
+                                Care Worker will help you in finding a care worker for your home. You can filter your priorities and find a care worker which suits your condition. You can also find the care worker jobs offered in each local region or state of Australia on Care Worker website. If you have a diploma or a master in Public Health Management, then you can apply for a care worker job in Australia.Care Worker will help you!
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
 
     <!-- top companaies -->
     @if ($top_companies && count($top_companies) > 0)
@@ -239,7 +260,59 @@
         @endif
     @endif
 
+    <section class="bg-light rounded shadow-sm md:tw-py-20 tw-py-12">
+        <div class="container">
+            <div class="text-center">
+                <h2>Care Worker Jobs</h2>
+            </div>
+            <div class="tw-mt-8 tw-relative tw-z-50">
+                <div class="row justify-content-center">
+                    <div class="col-md-12">
+                        <div class="p-4" style="font-size: 1.2rem;">
+                            <p>
+                                Care Worker Jobs include working as a personal health assistant. It requires one to take care of an ill person as their nurse or personal assistant and take care of them. They assist the clients in walking, dressing and moving. Another job role includes working as a Mobility Assistance. They help the individuals to move around within the home and in outside social events as well.
+                            </p>
+                            <p>
+                                Care Worker Jobs are diverse and one can earn up to AUD 100,000 -150,000 per year. In housekeeping and companionship, care workers earn more. Care Worker Jobs in Australia also requires transportation experts to move the client safely from one place to the other. Inshort, they can perform a number of roles but having patience and empathy towards the job is the main part of it. If you are finding a job as a Care Worker in Australia, Care Worker will help you in finding one !
+                            </p>
+                            <h3 class="pt-5">Types of Care Worker Jobs</h3>
+                            <p>
+                                There are different types of Care Worker Jobs in Australia. They are divided into categories which include working as an Aged Care Worker in which they help the older people to do daily life activities smoothly. They work in nursing homes as well. Another role includes trying to work as a  Disability Support Worker, in which they provide support to intellectually disabled individuals.
+                            </p>
+                            <p>
+                                Home Care Worker (Personal Care Assistant) provides care to the clients in their own homes. They try to make them live in their houses independently. Moreover, a Care Worker can also work as a Respite Care Worker by giving medicines and fluid to the patients. This role can be done for a shorter period of time. The most common type of job role is Mental Health Support Worker in which they provide mental health support to young minds.
+                            </p>
+                            <h3 class="pt-5">Full Time Care Worker Positions</h3>
+                            <p>
+                                Care Workers can also work on Full Time Care Worker Positions. They work as a nurse or personal care assistants in the homes and earn up to AUD 80,000-90,000. Full Time Care Workers also provide meal preparation and house maintenance services which makes them earn more.
+                            </p>
+                            <p>
+                                They need to have training in patience and empathy towards the patient without which the Australian Care Council do not allow them to work. You can find Care Worker Jobs in Australia on Care Worker website. Visit and Apply Now !
+                            </p>
+                            <h3 class="pt-5">Experienced Care worker Positions</h3>
+                            <p>
+                                Experienced Care Worker Positions include working for old age people and providing them elderly support. They also help the clients in their business matters. They also provide home and residential care to the people. They earn more than AUD150,000 due to their experience and reliability in the field.
+                            </p>
+                            <p>
+                                Care Worker Jobs in Australia vary depending on full-time and experience. You can also find experienced care worker positions by visiting our website.
+                            </p>
 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </section>       
+    <!-- google adsense area -->
+    @if (advertisement_status('home_page_ad'))
+        @if (advertisementCode('home_page_fat_ad_after_featuredjob_section'))
+            <div class="container my-4">
+                {!! advertisementCode('home_page_fat_ad_after_featuredjob_section') !!}
+            </div>
+        @endif
+    @endif
 
     <section class="tw-bg-primary-50 md:tw-py-20 tw-py-12">
         <div class="container">
@@ -335,14 +408,7 @@
             </div>
         </div>
     </section>
-    <!-- google adsense area -->
-    @if (advertisement_status('home_page_ad'))
-        @if (advertisementCode('home_page_fat_ad_after_featuredjob_section'))
-            <div class="container my-4">
-                {!! advertisementCode('home_page_fat_ad_after_featuredjob_section') !!}
-            </div>
-        @endif
-    @endif
+
 
     <!-- google adsense area end -->
 
@@ -374,6 +440,27 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
+        <section class="bg-light rounded shadow-sm md:tw-py-20 tw-py-12">
+            <div class="container text-center">
+                <div>
+                    <h2>Why Choose Us?</h2>
+                </div>
+                <div class="tw-mt-8 tw-relative tw-z-50">
+                     <div class="row justify-content-center">
+                        <div class="col-md-12 ">
+                            <div class=" p-4 " style="font-size: 1.2rem;">
+    
+                                <p>
+                                    Care Worker is a great platform and a user friendly website. It helps the visitors to filter Care Worker Jobs in Australia from every state to local region. Our platform lists various care worker positions across Australia, including aged care, disability support, and home care roles. You can filter jobs by state and job type (full-time, part-time, etc.). Check Care Worker website for latest job listings !
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
+    
             </div>
         </section>
         <!-- working process section -->
@@ -467,6 +554,91 @@
             <div class="rt-spacer-100 rt-spacer-md-50"></div>
         </section>
 
+        <section class="bg-light py-5">
+            <div class="container">
+                <h2 class="text-center mb-4">Frequently Asked Questions</h2>
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item border" style="border-color: #6D9FDC;">
+                        <p class="accordion-header" id="headingOne">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne" style="border-color: #6D9FDC; color: #6D9FDC;">
+                                <strong>How to become a care worker in Australia?</strong>
+                            </button>
+                        </p>
+                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                You can become a care worker in Australia by having a professional diploma in care working or public health. These degrees will help you start a career as a care worker in Australia.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border" style="border-color: #6D9FDC;">
+                        <p class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo" style="border-color: #6D9FDC; color: #6D9FDC;">
+                                <strong>How much do care workers earn in Australia?</strong>
+                            </button>
+                        </p>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Care workers earn competitive salaries in Australia, ranging from AUD 100,000 to 130,000 per year. With 2-3 years of experience, you can earn even more.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border" style="border-color: #6D9FDC;">
+                        <p class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree" style="border-color: #6D9FDC; color: #6D9FDC;">
+                                <strong>Can I move to Australia as a care worker?</strong>
+                            </button>
+                        </p>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, you can move to Australia as a care worker. Australia offers easy PR benefits and career development opportunities for skilled care workers.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item border" style="border-color: #6D9FDC;">
+                        <p class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" style="border-color: #6D9FDC; color: #6D9FDC;">
+                                <strong>Are care workers needed in Australia?</strong>
+                            </button>
+                        </p>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes, care workers are in high demand in Australia, especially due to the aging population. Many households require care workers for elderly care and home maintenance.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    
+    
+    
+        <style>
+            .accordion-button:focus {
+                box-shadow: none;
+            }
+            .accordion-button:not(.collapsed) {
+                color: #6D9FDC;
+                background-color: #e0e0e0;
+            }
+            .accordion-button:not(.collapsed) .icon {
+                content: "-";
+            }
+            .accordion-button.collapsed .icon {
+                content: "+";
+            }
+            .accordion-button {
+                font-size: 1.25rem; /* Increase the font size of the questions */
+            }
+            .accordion-body {
+                font-size: 1.15rem; /* Increase the font size of the answers */
+            }
+            .accordion-button .icon {
+                margin-left: auto;
+                font-size: 1.25rem; /* Adjust the size of the icon */
+            }
+        </style>
+
         <!-- google adsense area -->
         @if (advertisement_status('home_page_ad'))
             @if (advertisementCode('home_page_fat_ad_after_workingprocess_section'))
@@ -475,6 +647,28 @@
                 </div>
             @endif
         @endif
+
+        <section class="bg-light rounded shadow-sm md:tw-py-20 tw-py-12">
+            <div class="container text-center">
+                <div>
+                    <h2>Conclusion</h2>
+                </div>
+                <div class="tw-mt-8 tw-relative tw-z-50">
+                     <div class="row justify-content-center">
+                        <div class="col-md-12 ">
+                            <div class=" p-4 " style="font-size: 1.2rem;">
+    
+                                <p>
+                                    Care Worker Jobs in Australia are offered by good organizations and can be a good way to start your career in Australia. You can work as a part-time or full-time worker in Australia. Care Worker is a platform which helps individuals with public health degrees to pursue a career by providing latest job listings on Care Worker Jobs. Our website provides a comprehensive database of available care worker positions across various settings, such as aged care, disability support, and home care. You can also apply by visiting our website !
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
+    
+            </div>
+        </section>
         <!-- google adsense area end -->
         <!-- jobs card -->
     <!-- google adsense area end -->
