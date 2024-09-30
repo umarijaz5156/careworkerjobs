@@ -170,25 +170,40 @@
 
 </section>
 
-    <section class="bg-light rounded shadow-sm md:tw-py-20 tw-py-12">
-        <div class="container">
-            <div class="tw-mt-8 tw-relative tw-z-50">
-                <div class="row justify-content-center">
-                    <div class="col-md-12 ">
-                        <div class="" style="font-size: 1.2rem;">
+<section class="bg-light rounded shadow-sm md:tw-py-20 tw-py-12">
+    <div class="container">
+        <div class="tw-mt-8 tw-relative tw-z-50">
+            <div class="row justify-content-center">
+                <div class="col-md-12">
+                    <div style="font-size: 1.2rem;">
+                    
                         <p>
-                            You want to start a career as a care worker in Australia? Care Worker Jobs is a great platform for finding a job in this field. Care workers maintain the clients health in their homes.They support them in daily activities of life and help them in maintaining the house. A care worker can perform different roles and it depends on their field of specialization. Care Worker Jobs in Australia covers roles like aged care, disability support, and home care services. 
-                            <p>
-                                Care Worker will help you in finding a care worker for your home. You can filter your priorities and find a care worker which suits your condition. You can also find the care worker jobs offered in each local region or state of Australia on Care Worker website. If you have a diploma or a master in Public Health Management, then you can apply for a care worker job in Australia.Care Worker will help you!
-                            </p>
+                            Are you looking for a job as a care worker in Australia? Make Care Worker Jobs your first stop to find roles such as:
+                        </p>
 
-                        </div>
+                        <ul>
+                            <li>Aged Carer</li>
+                            <li>Early Learning & Child Care</li>
+                            <li>Nursing Assistant</li>
+                            <li>Care Worker</li>
+                            <li>Community Support Worker</li>
+                            <li>Personal Care Assistant</li>
+                            <li>Rehabilitation Worker</li>
+                            <li>Registered Nurse</li>
+                            <li>Lifestyle Assistant</li>
+                            <li>Disability Support Worker</li>
+                        </ul>
+
+                        <p>
+                            And many more related areas… Our platform is continuously updated with new care worker positions throughout Australia.
+                        </p>
                     </div>
                 </div>
-
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
 
     <!-- top companaies -->
     @if ($top_companies && count($top_companies) > 0)
