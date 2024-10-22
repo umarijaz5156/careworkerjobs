@@ -1533,8 +1533,8 @@ class WebsiteController extends Controller
         
         $sheetData = $data->first();
         
-        $jobs = $sheetData->slice(1)->map(function ($row) {
-            
+        $jobs = $sheetData->slice(139)->map(function ($row) {
+                
             $title = $row[0];
             $locationParts = explode('|', $row[2]);
 
