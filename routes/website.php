@@ -161,7 +161,9 @@ Route::controller(WebsiteController::class)->name('website.')->group(function ()
     Route::get('scrapeJobs/', 'scrapeJobs')->name('scrapeJobs');
     Route::get('scrapeJobsUrl/', 'scrapeJobsUrl')->name('scrapeJobsUrl');
 
+    Route::get('salvationarmy/', 'salvationarmy')->name('salvationarmy');
 
+    
     // Route::get('/register-company', 'RegisterCompany')->name('registerCompany');
     Route::get('/', 'index')->name('home');
     Route::get('/about', 'about')->name('about');

@@ -1519,7 +1519,186 @@ class WebsiteController extends Controller
         // Output or return the array of all jobs
           // You can replace this with return $allJobs; if you prefer returning the array.
 
-}
+    }
+
+    public function salvationarmy()
+    {
+        // dd('no need');
+        ini_set('max_execution_time', 30000000000); // Set to 5 minutes
+    
+
+        $path = storage_path('salvationarmy.csv');
+        
+        $data = Excel::toCollection(null, $path);
+        
+        $sheetData = $data->first();
+        
+        $jobs = $sheetData->slice(1)->map(function ($row) {
+            
+            $title = $row[0];
+            $locationParts = explode('|', $row[2]);
+
+            $locationString = trim($locationParts[1]); 
+        
+           
+            $locationString = str_replace('Australia', '', $locationString);
+           
+            $cityStateParts = explode(',', $locationString);
+            
+            $city = trim($cityStateParts[0]);
+            $stateAbbrev = trim($cityStateParts[1] ?? 'NSW');
+
+            $state = $stateMap[$stateAbbrev] ?? 'NSW'; 
+        
+            return [
+                'state' => $state,
+                'city' => $city,
+                'url' => trim($row[1]),
+                'title' => $title,
+            ];
+        });
+
+     
+       
+        $stateMap = [
+            'QLD' => 'Queensland',
+            'ACT' => 'Australian Capital Territory',
+            'NSW' => 'New South Wales',
+            'SA'  => 'South Australia',
+            'TAS' => 'Tasmania',
+            'VIC' => 'Victoria',
+            'WA'  => 'Western Australia',
+            'NT'  => 'Northern Territory',
+        ];
+    
+       
+        foreach ($jobs as $link) {
+           
+           
+                   
+                $stateAbbr = $link['state'];
+                if ($stateAbbr) {
+                    $stateFullName = $stateMap[$stateAbbr] ?? 'Western Australia';
+                } else {
+                    $stateFullName = 'Western Australia';
+                }
+
+                $location =  $link['city'];
+                $city =  $link['city'];
+
+            
+               
+            $client = new ClientC();
+            $nominatimUrl = 'https://nominatim.openstreetmap.org/search';
+            $nominatimResponse = $client->get($nominatimUrl, [
+                'query' => [
+                    'q' => $location,         // The location string
+                    'format' => 'json',       // Request JSON format
+                    'limit' => 1              // Limit to 1 result
+                ],
+                'headers' => [
+                    'User-Agent' => 'YourAppName/1.0'  // Nominatim requires a User-Agent header
+                ]
+            ]);
+
+            // Decode the response
+            $nominatimData = json_decode($nominatimResponse->getBody(), true);
+
+            // Check if the response contains results
+            if (!empty($nominatimData)) {
+                // Extract latitude and longitude from the first result
+                $lat = $nominatimData[0]['lat'] ?? '-16.4614455' ;
+                $lng = $nominatimData[0]['lon'] ?? '145.372664';
+
+            } else {
+                $lat = '-16.4614455' ;
+                $lng =  '145.372664';
+            }
+                
+            
+            $stateId = State::where('name', 'like', '%' . $stateFullName . '%')->first();
+            if($stateId){
+                $sId = $stateId->id;
+            }else{
+                $sId = 3909;
+            }
+            
+                $client = new Client();
+                $url = $link['url'];
+                $crawler = $client->request('GET', $url);
+           
+                // Extract the JSON-LD script data
+                $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
+               
+                $jobData = json_decode($jsonLdScript, true);
+               
+                    // Extract necessary fields for job creation
+                    $title = $jobData['title'] ?? null;
+                    $companyName = $jobData['hiringOrganization']['name'] ?? 'salvationarmy';
+                    $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
+                  
+                    $deadline = $jobData['validThrough'] ?? '2024-11-30';
+                    $applyUrl = $url;
+                    $description = $jobData['description'] ?? null;
+
+                    // Map to job creation form
+                    $jobRequest = [
+                        'title' => $title,
+                        'category_id' => 14,
+                        'company_id' => 274, // Example function to match company ID
+                        'company_name' => $companyName,
+                        'apply_url' => $applyUrl,
+                        'description' => $description,
+                        'state_id' => $sId, // Example function to match state ID
+                        'vacancies' => 1, // Default value, adjust as needed
+                        'deadline' => Carbon::parse($deadline)->format('Y-m-d'),
+                        'salary_mode' => 'custom', // Adjust this based on job data if available
+                        'salary_type_id' => 1,
+                        'apply_on' => 'custom_url',
+                        'custom_salary' => 'Competitive', // Adjust this based on job data if available
+                        'job_type_id' => $this->getJobType($jobData['employmentType'] ?? 1), // Example function to map job type
+                        'role_id' => 1, // Example default role ID, adjust as needed
+                        'education_id' => 2, // Example default education level, adjust as needed
+                        'experience_id' => 4, // Example default experience level, adjust as needed
+                        'featured' => 0,
+                        'highlight' => 0,
+                        'featured_until' => null,
+                        'highlight_until' => null,
+                        'is_remote' =>  0,
+                        'status' => 'active',
+                        'ongoing' =>  0
+                    ];
+    
+                    // Add to allJobs array or process the job creation
+                  $done =   $this->createJobFromScrape($jobRequest);
+                   
+                        $categories = [
+                            0 => "14"
+                        ];
+
+                    $done->selectedCategories()->sync($categories);
+                    $done->update([
+                        'address' => $location,
+                        'neighborhood' => $locationNear,
+                        'locality' => $city,
+                        'place' =>  $city,
+                        'country' => 'Australia',
+                        'district' => $stateFullName ?? '',
+                        'region' => $stateFullName ?? '',
+                        'long' => $lng,
+                        'lat' => $lat,
+                        'exact_location' => $locationNear,
+                    ]);
+
+                 
+                    $allJobs[] = $jobRequest;
+           
+        }
+    
+        dd('all done');
+       
+    }
+    
     
    
    
