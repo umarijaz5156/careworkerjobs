@@ -1746,7 +1746,7 @@ class WebsiteController extends Controller
         //     'NT'  => 'Northern Territory',
         // ];
     
-       dd( $jobs );
+     
         foreach ($jobs as $link) {
         
                 $location =  $link['location'];
