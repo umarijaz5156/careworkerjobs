@@ -1982,20 +1982,20 @@ class WebsiteController extends Controller
                 sleep(1);
                 $crawler = $client->request('GET', $url);
                 // $content = $crawler->filter('.job-description')->html();
-               $descriptionNode = $crawler->filter('.job-description');
-
-                if ($descriptionNode->count() > 0 && trim($descriptionNode->html()) !== '') {
-                    $content = $descriptionNode->html(); // Use the HTML content if it exists
-                } else {
-                    // Fallback description if the node is empty
-                    $content = "As the aged care division of St Vincent’s Health Australia, St Vincent’s Care Services shares a history of compassionate care and support which stretches in excess of 175 years.
-
-                St Vincent’s Health Australia is a ministry of Mary Aikenhead Ministries. Mary Aikenhead Ministries was established by the Congregation of Religious Sisters of Charity of Australia to continue to build on the charism and traditions of the Sisters of Charity through aged care, health, research, education and social services ministries.";
-                }
-
+                // Extract the JSON-LD script data
+                $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
+                
+                $jobData = json_decode($jsonLdScript, true);
+                
+                $title = $jobData['title'] ?? null;
+                $companyName = $jobData['hiringOrganization']['name'] ?? 'Anglicare';
+                $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
+              
+                $deadline = $jobData['validThrough'] ?? '2024-11-30';
+                $applyUrl = $url;
+                $description = $jobData['description'] ?? null;
 
                
-                $description = $content;
  
               
                     $companyName = 'calvarycare';
@@ -2024,7 +2024,7 @@ class WebsiteController extends Controller
                         'salary_type_id' => 1,
                         'apply_on' => 'custom_url',
                         'custom_salary' => 'Competitive', 
-                        'job_type_id' => 1, 
+                       'job_type_id' => $this->getJobType($jobData['employmentType'] ?? 1),
                         'role_id' => 1, 
                         'education_id' => 2, 
                         'experience_id' => 4, 
@@ -2055,7 +2055,7 @@ class WebsiteController extends Controller
                         'region' => $stateFullName ?? '',
                         'long' => $lng,
                         'lat' => $lat,
-                        'exact_location' => $exact_location,
+                        'exact_location' => $locationNear,
                     ]);
 
                  
