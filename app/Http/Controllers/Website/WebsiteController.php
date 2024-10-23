@@ -1702,7 +1702,7 @@ class WebsiteController extends Controller
     public function anglicare()
     {
         // dd('no need');   
-        ini_set('max_execution_time', 300000); // Set to 5 minutes
+        // ini_set('max_execution_time', 300000); // Set to 5 minutes
     
 
         $path = storage_path('anglicare.csv');
@@ -1746,7 +1746,7 @@ class WebsiteController extends Controller
         //     'NT'  => 'Northern Territory',
         // ];
     
-       
+       dd( $jobs );
         foreach ($jobs as $link) {
         
                 $location =  $link['location'];
@@ -1810,6 +1810,11 @@ class WebsiteController extends Controller
                         $sId = 3909;
                     }
 
+                       // Check if the job already exists
+                    $existingJob = Job::where('apply_url', $applyUrl)->first();
+                    if ($existingJob) {
+                        continue; // Skip processing this job
+                    }
                     // Map to job creation form
                     $jobRequest = [
                         'title' => $title,
@@ -1879,9 +1884,7 @@ class WebsiteController extends Controller
         return $mapping[$employmentType] ?? 1; // Default to a job type ID
     }
     
-    /**
-     * Example function to create job from scraped data
-     */
+  
     private function createJobFromScrape($jobData)
     {
        $job =  Job::create($jobData);
