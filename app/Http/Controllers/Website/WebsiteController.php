@@ -1982,7 +1982,18 @@ class WebsiteController extends Controller
                 sleep(1);
                 $crawler = $client->request('GET', $url);
                 $content = $crawler->filter('.job-description')->html();
-                
+               $descriptionNode = $crawler->filter('.job-description');
+
+                if ($descriptionNode->count() > 0 && trim($descriptionNode->html()) !== '') {
+                    $content = $descriptionNode->html(); // Use the HTML content if it exists
+                } else {
+                    // Fallback description if the node is empty
+                    $content = "As the aged care division of St Vincent’s Health Australia, St Vincent’s Care Services shares a history of compassionate care and support which stretches in excess of 175 years.
+
+                St Vincent’s Health Australia is a ministry of Mary Aikenhead Ministries. Mary Aikenhead Ministries was established by the Congregation of Religious Sisters of Charity of Australia to continue to build on the charism and traditions of the Sisters of Charity through aged care, health, research, education and social services ministries.";
+                }
+
+
                
                 $description = $content;
  
