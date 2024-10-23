@@ -1523,7 +1523,7 @@ class WebsiteController extends Controller
 
     public function salvationarmy()
     {
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 30000000000); // Set to 5 minutes
     
 
@@ -1533,7 +1533,7 @@ class WebsiteController extends Controller
         
         $sheetData = $data->first();
         
-        $jobs = $sheetData->slice(139)->map(function ($row) {
+        $jobs = $sheetData->slice(1)->map(function ($row) {
                 
             $title = $row[0];
             $locationParts = explode('|', $row[2]);
@@ -1558,8 +1558,7 @@ class WebsiteController extends Controller
             ];
         });
 
-     
-       
+    
         $stateMap = [
             'QLD' => 'Queensland',
             'ACT' => 'Australian Capital Territory',
@@ -1625,6 +1624,10 @@ class WebsiteController extends Controller
             
                 $client = new Client();
                 $url = $link['url'];
+                $existingJob = Job::where('apply_url', $url)->first();
+                if ($existingJob) {
+                    continue;
+                }
                 $crawler = $client->request('GET', $url);
            
                 // Extract the JSON-LD script data
@@ -1645,7 +1648,7 @@ class WebsiteController extends Controller
                     $jobRequest = [
                         'title' => $title,
                         'category_id' => 14,
-                        'company_id' => 274, // Example function to match company ID
+                        'company_id' => 250, // Example function to match company ID
                         'company_name' => $companyName,
                         'apply_url' => $applyUrl,
                         'description' => $description,
