@@ -1648,7 +1648,7 @@ class WebsiteController extends Controller
                     $jobRequest = [
                         'title' => $title,
                         'category_id' => 14,
-                        'company_id' => 250, // Example function to match company ID
+                        'company_id' => 274, // Example function to match company ID
                         'company_name' => $companyName,
                         'apply_url' => $applyUrl,
                         'description' => $description,
