@@ -1879,7 +1879,7 @@ class WebsiteController extends Controller
     
     public function svha(){
 
-        // dd('all done');
+        dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
 
@@ -2057,7 +2057,8 @@ class WebsiteController extends Controller
                     $allJobs[] = $jobRequest;
            
         }
-    
+        dd('all done');
+
        
         // Output or return the array of all jobs
           // You can replace this with return $allJobs; if you prefer returning the array.
