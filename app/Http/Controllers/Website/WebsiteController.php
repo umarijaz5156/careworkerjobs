@@ -1988,7 +1988,7 @@ class WebsiteController extends Controller
                 $jobData = json_decode($jsonLdScript, true);
                 
                 $title = $jobData['title'] ?? null;
-                $companyName = $jobData['hiringOrganization']['name'] ?? 'Anglicare';
+                $companyName = $jobData['hiringOrganization']['name'] ?? 'St Vincents Care Services';
                 $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
               
                 $deadline = $jobData['validThrough'] ?? '2024-11-30';
@@ -1996,11 +1996,6 @@ class WebsiteController extends Controller
                 $description = $jobData['description'] ?? null;
 
                
- 
-              
-                    $companyName = 'calvarycare';
-
-                    $applyUrl = $url;
                     $description = $description ?? null;
 
                     try {
