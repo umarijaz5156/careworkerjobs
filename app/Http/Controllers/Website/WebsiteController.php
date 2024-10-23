@@ -1981,7 +1981,6 @@ class WebsiteController extends Controller
                 $client = new Client();
                 sleep(1);
                 $crawler = $client->request('GET', $url);
-                dd( $crawler);
                 $content = $crawler->filter('.job-description')->html();
                 
                
