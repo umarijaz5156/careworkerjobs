@@ -1981,7 +1981,7 @@ class WebsiteController extends Controller
                 $client = new Client();
                 sleep(1);
                 $crawler = $client->request('GET', $url);
-                $content = $crawler->filter('.job-description')->html();
+                // $content = $crawler->filter('.job-description')->html();
                $descriptionNode = $crawler->filter('.job-description');
 
                 if ($descriptionNode->count() > 0 && trim($descriptionNode->html()) !== '') {
