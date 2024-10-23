@@ -1702,7 +1702,7 @@ class WebsiteController extends Controller
     public function anglicare()
     {
         // dd('no need');   
-        ini_set('max_execution_time', 30000000000); // Set to 5 minutes
+        ini_set('max_execution_time', 300000); // Set to 5 minutes
     
 
         $path = storage_path('anglicare.csv');
@@ -1715,20 +1715,15 @@ class WebsiteController extends Controller
                
             $title = $row[0];
 
-            $fullString = $row[2];  // This contains the string like "umar ijaz, lhr"
+            $fullString = $row[2];  
 
-            // Initialize the first part variable
             $firstPart = '';
             
-            // Check for the presence of a comma or a dash
             if (strpos($fullString, ',') !== false) {
-                // Split on the first comma
                 $firstPart = trim(substr($fullString, 0, strpos($fullString, ',')));
             } elseif (strpos($fullString, '-') !== false) {
-                // Split on the first dash
                 $firstPart = trim(substr($fullString, 0, strpos($fullString, '-')));
             } else {
-                // If neither, take the whole string
                 $firstPart = trim($fullString);
             }
             
@@ -1739,69 +1734,62 @@ class WebsiteController extends Controller
             ];
         });
 
-     
        
-        $stateMap = [
-            'QLD' => 'Queensland',
-            'ACT' => 'Australian Capital Territory',
-            'NSW' => 'New South Wales',
-            'SA'  => 'South Australia',
-            'TAS' => 'Tasmania',
-            'VIC' => 'Victoria',
-            'WA'  => 'Western Australia',
-            'NT'  => 'Northern Territory',
-        ];
+        // $stateMap = [
+        //     'QLD' => 'Queensland',
+        //     'ACT' => 'Australian Capital Territory',
+        //     'NSW' => 'New South Wales',
+        //     'SA'  => 'South Australia',
+        //     'TAS' => 'Tasmania',
+        //     'VIC' => 'Victoria',
+        //     'WA'  => 'Western Australia',
+        //     'NT'  => 'Northern Territory',
+        // ];
     
        
         foreach ($jobs as $link) {
-           
-
-
-
+        
                 $location =  $link['location'];
-                
-
-            
                
-            $client = new ClientC();
-            $nominatimUrl = 'https://nominatim.openstreetmap.org/search';
-            $nominatimResponse = $client->get($nominatimUrl, [
-                'query' => [
-                    'q' => $location,         // The location string
-                    'format' => 'json',       // Request JSON format
-                    'limit' => 1              // Limit to 1 result
-                ],
-                'headers' => [
-                    'User-Agent' => 'YourAppName/1.0'  // Nominatim requires a User-Agent header
-                ]
-            ]);
+                $client = new ClientC();
+                $nominatimUrl = 'https://nominatim.openstreetmap.org/search';
+                $nominatimResponse = $client->get($nominatimUrl, [
+                    'query' => [
+                        'q' => $location,         // The location string
+                        'format' => 'json',       // Request JSON format
+                        'limit' => 1              // Limit to 1 result
+                    ],
+                    'headers' => [
+                        'User-Agent' => 'YourAppName/1.0'  // Nominatim requires a User-Agent header
+                    ]
+                ]);
 
-            // Decode the response
-            $nominatimData = json_decode($nominatimResponse->getBody(), true);
-            // Check if the response contains results
-            if (!empty($nominatimData)) {
-                // Extract latitude and longitude from the first result
-                $lat = $nominatimData[0]['lat'] ?? '-16.4614455' ;
-                $lng = $nominatimData[0]['lon'] ?? '145.372664';
+                // Decode the response
+                $nominatimData = json_decode($nominatimResponse->getBody(), true);
+                // Check if the response contains results
+                if (!empty($nominatimData)) {
+                    // Extract latitude and longitude from the first result
+                    $lat = $nominatimData[0]['lat'] ?? '-16.4614455' ;
+                    $lng = $nominatimData[0]['lon'] ?? '145.372664';
 
-            } else {
-                $lat = '-16.4614455' ;
-                $lng =  '145.372664';
-            }
+                } else {
+                    $lat = '-16.4614455' ;
+                    $lng =  '145.372664';
+                }
                 
                                
          
             
-                $client = new Client();
-                $url = $link['url'];
-                $crawler = $client->request('GET', $url);
-           
-                // Extract the JSON-LD script data
-                $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
-               
-                $jobData = json_decode($jsonLdScript, true);
-               
-                    // Extract necessary fields for job creation
+                    $client = new Client();
+                    $url = $link['url'];
+                    $crawler = $client->request('GET', $url);
+            
+                    // Extract the JSON-LD script data
+                    $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
+                
+                    $jobData = json_decode($jsonLdScript, true);
+                    
+              
                     $title = $jobData['title'] ?? null;
                     $companyName = $jobData['hiringOrganization']['name'] ?? 'Anglicare';
                     $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
@@ -1811,12 +1799,8 @@ class WebsiteController extends Controller
                     $description = $jobData['description'] ?? null;
 
 
-                    // $stateAbbr = $link['state'];
-                    // if ($stateAbbr) {
-                    //     $stateFullName = $stateMap[$stateAbbr] ?? 'Western Australia';
-                    // } else {
-                        $stateFullName = 'Western Australia';
-                    // }
+                    $stateFullName = 'Western Australia';
+                    
                     $city =  $location;
                     
                     $stateId = State::where('name', 'like', '%' . $stateFullName . '%')->first();
