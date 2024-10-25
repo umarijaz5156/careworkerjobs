@@ -2267,7 +2267,8 @@ class WebsiteController extends Controller
         ];
         
         // Map through the rows (excluding the first row), and extract URL and location
-        $jobs = $sheetData->slice(1)->map(function ($row) use ($stateMap) {
+        $jobs = $sheetData->slice(130)->map(function ($row) use ($stateMap) {
+          
             $locationParts = explode(',', $row[3]);
             $city = trim($locationParts[0] ?? ''); 
             $stateAbbreviation = trim($locationParts[1] ?? '');
