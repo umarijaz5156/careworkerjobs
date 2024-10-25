@@ -2064,6 +2064,186 @@ class WebsiteController extends Controller
           // You can replace this with return $allJobs; if you prefer returning the array.
       
     }
+
+    public function resthaven(){
+
+        // dd('no need');
+        ini_set('max_execution_time', 300000000); // Set to 5 minutes
+    
+
+        $path = storage_path('resthaven.csv');
+        
+        $data = Excel::toCollection(null, $path);
+        
+        $sheetData = $data->first();
+        
+        // Map through the rows (excluding the first row), and extract URL and location
+        $jobs = $sheetData->slice(1)->map(function ($row) {
+            
+              
+                if (!empty($row[2])) {
+                    // Get the text before the first comma in the third item
+                    $location = explode(',', $row[2])[0];
+                    
+                    // Modify the row or add the extracted location as needed
+                    $row[2] = $location;
+                }else{
+                    $row[2]   = 'Westbourne Park'; 
+                }
+                
+                return [
+                    'job_title' => $row[0],
+                    'url' => $row[1],
+                    'location' => $row[2],
+                    'state' => 'South Australia',
+                ];         
+            
+        });
+
+        
+    
+        foreach ($jobs as $link) {
+           
+            // dd($link);
+             
+                $stateFullName = $link['state'];
+                $location =  $link['location'];
+                $city =  $link['location'];
+                $title = $link['job_title'];
+                $url = $link['url'];
+
+                $existingJob = Job::where('apply_url', $url)->first();
+                if ($existingJob) {
+                    continue; // Skip processing this job
+                }
+            
+            $client = new ClientC();
+            $nominatimUrl = 'https://nominatim.openstreetmap.org/search';
+            $nominatimResponse = $client->get($nominatimUrl, [
+                'query' => [
+                    'q' => $location,         
+                    'format' => 'json',       
+                    'limit' => 1              
+                ],
+                'headers' => [
+                    'User-Agent' => 'YourAppName/1.0'  
+                ]
+            ]);
+
+            $nominatimData = json_decode($nominatimResponse->getBody(), true);
+       
+            if (!empty($nominatimData)) {
+                $lat = $nominatimData[0]['lat'] ?? '-16.4614455' ;
+                $lng = $nominatimData[0]['lon'] ?? '145.372664';
+                $exact_location = $nominatimData[0]['display_name'] ?? $location;
+
+            } else {
+                $lat = '-16.4614455' ;
+                $lng =  '145.372664';
+                $exact_location = $location;
+
+            }
+                
+            
+
+                $stateId = State::where('name', 'like', '%' . $stateFullName . '%')->first();
+                if($stateId){
+                    $sId = $stateId->id;
+                }else{
+                    $sId = 3909;
+                }
+            
+                $client = new Client();
+                sleep(1);
+                $crawler = $client->request('GET', $url);
+               
+                $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
+                
+                $jobData = json_decode($jsonLdScript, true);
+                // dd($jobData);
+                
+                // Extract required fields with null checks and default values
+                $title = $jobData['title'] ?? null;
+                $companyName = $jobData['hiringOrganization']['name'] ?? 'resthaven';
+                $locationNear = $jobData['jobLocation'][0]['address']['addressLocality'] ?? 'Australia';
+                $description = $jobData['description'] ?? null;
+
+                // Format the deadline date to a valid format, or use a default if missing
+                $deadline = isset($jobData['validThrough']) 
+                    ? Carbon::parse($jobData['validThrough'])->format('Y-m-d') 
+                    : '2024-11-30';
+
+                $applyUrl = $url;  // URL from the initial crawl
+
+               
+                    try {
+                        $formattedDeadline = Carbon::parse($deadline)->format('Y-m-d');
+                    } catch (\Exception $e) {
+                        $formattedDeadline = '2024-11-25'; // Default date
+                    }
+
+                    // Map to job creation form
+                    $jobRequest = [
+                        'title' => $title,
+                        'category_id' => 14,
+                        'company_id' => 297,
+                        'company_name' => $companyName,
+                        'apply_url' => $applyUrl,
+                        'description' => $description,
+                        'state_id' => $sId,
+                        'vacancies' => 1,
+                        'deadline' => $formattedDeadline,
+                        'salary_mode' => 'custom', 
+                        'salary_type_id' => 1,
+                        'apply_on' => 'custom_url',
+                        'custom_salary' => 'Competitive', 
+                       'job_type_id' => $this->getJobType($jobData['employmentType'] ?? 1),
+                        'role_id' => 1, 
+                        'education_id' => 2, 
+                        'experience_id' => 4, 
+                        'featured' => 0,
+                        'highlight' => 0,
+                        'featured_until' => null,
+                        'highlight_until' => null,
+                        'is_remote' =>  0,
+                        'status' => 'active',
+                        'ongoing' =>  0
+                    ];
+    
+                    // Add to allJobs array or process the job creation
+                  $done =   $this->createJobFromScrape($jobRequest);
+                   
+                        $categories = [
+                            0 => "14"
+                        ];
+
+                    $done->selectedCategories()->sync($categories);
+                    $done->update([
+                        'address' => $exact_location,
+                        'neighborhood' => $location,
+                        'locality' => $city,
+                        'place' =>  $city,
+                        'country' => 'Australia',
+                        'district' => $stateFullName ?? '',
+                        'region' => $stateFullName ?? '',
+                        'long' => $lng,
+                        'lat' => $lat,
+                        'exact_location' => $locationNear,
+                    ]);
+
+                 
+                    $allJobs[] = $jobRequest;
+           
+        }
+        dd('all done');
+
+       
+        // Output or return the array of all jobs
+          // You can replace this with return $allJobs; if you prefer returning the array.
+      
+    }
+
+    
    
     private function getJobType($employmentType)
     {

@@ -164,7 +164,9 @@ Route::controller(WebsiteController::class)->name('website.')->group(function ()
     Route::get('salvationarmy/', 'salvationarmy')->name('salvationarmy');
     Route::get('anglicare/', 'anglicare')->name('anglicare');
     Route::get('svha/', 'svha')->name('svha');
+    Route::get('resthaven/', 'resthaven')->name('resthaven');
 
+    
     
     
     // Route::get('/register-company', 'RegisterCompany')->name('registerCompany');
