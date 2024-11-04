@@ -20,7 +20,7 @@ class JobCreateService
      */
     public function execute($request): Job
     {
-        dd($request->all());
+        // dd($request->all());
         // Highlight & featured
         $highlight = $request->badge == 'highlight' ? 1 : 0;
         $featured = $request->badge == 'featured' ? 1 : 0;
