@@ -18,8 +18,24 @@ use Illuminate\Support\Facades\Route;
 use Modules\Seo\Entities\Seo;
 use App\Http\Controllers\Api\CompanyController as ApiCompanyController;
 use App\Http\Controllers\Api\JobController;
-  
+use App\Models\Job;
 
+Route::get('/jobs/update-status', function () {
+    $currentDateTime = now();
+    $jobs = Job::where('status', '<>', 'expired')->get();
+
+    foreach ($jobs as $job) {
+        $deadline = $job->deadline;
+
+        if ($deadline <= $currentDateTime) {
+            $job->update([
+                'status' => 'expired',
+            ]);
+        }
+    }
+
+    return response()->json(['message' => 'Job statuses updated successfully.']);
+});
  
 // Route::get('/test', function () {
 //     Seo::query()->delete();
@@ -165,7 +181,7 @@ Route::controller(WebsiteController::class)->name('website.')->group(function ()
     Route::get('anglicare/', 'anglicare')->name('anglicare');
     Route::get('svha/', 'svha')->name('svha');
     Route::get('resthaven/', 'resthaven')->name('resthaven');
-    Route::get('resthaven/', 'resthaven')->name('resthaven');
+    // Route::get('resthaven/', 'resthaven')->name('resthaven');
     Route::get('AustralianUnity/', 'AustralianUnity')->name('AustralianUnity');
 
     

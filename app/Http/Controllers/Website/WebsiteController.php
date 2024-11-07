@@ -1521,9 +1521,12 @@ class WebsiteController extends Controller
 
     }
 
+
+
+
     public function salvationarmy()
     {
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 30000000000); // Set to 5 minutes
     
 
@@ -1634,7 +1637,7 @@ class WebsiteController extends Controller
                 $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
                
                 $jobData = json_decode($jsonLdScript, true);
-               
+
                     // Extract necessary fields for job creation
                     $title = $jobData['title'] ?? null;
                     $companyName = $jobData['hiringOrganization']['name'] ?? 'salvationarmy';
@@ -1704,7 +1707,7 @@ class WebsiteController extends Controller
     
     public function anglicare()
     {
-        dd('no need');   
+        // dd('no need');   
         // ini_set('max_execution_time', 300000); // Set to 5 minutes
     
 
@@ -1737,7 +1740,6 @@ class WebsiteController extends Controller
             ];
         });
 
-       
         // $stateMap = [
         //     'QLD' => 'Queensland',
         //     'ACT' => 'Australian Capital Territory',
@@ -1792,7 +1794,7 @@ class WebsiteController extends Controller
                 
                     $jobData = json_decode($jsonLdScript, true);
                     
-              
+
                     $title = $jobData['title'] ?? null;
                     $companyName = $jobData['hiringOrganization']['name'] ?? 'Anglicare';
                     $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
@@ -1879,7 +1881,7 @@ class WebsiteController extends Controller
     
     public function svha(){
 
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
 
@@ -1925,7 +1927,6 @@ class WebsiteController extends Controller
             
         });
 
-       
     
         foreach ($jobs as $link) {
            
@@ -2067,7 +2068,7 @@ class WebsiteController extends Controller
 
     public function resthaven(){
 
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
 
@@ -2160,7 +2161,6 @@ class WebsiteController extends Controller
                 $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
                 
                 $jobData = json_decode($jsonLdScript, true);
-                // dd($jobData);
                 
                 // Extract required fields with null checks and default values
                 $title = $jobData['title'] ?? null;
@@ -2242,6 +2242,8 @@ class WebsiteController extends Controller
           // You can replace this with return $allJobs; if you prefer returning the array.
       
     }
+    
+
     
     public function AustralianUnity(){
 
