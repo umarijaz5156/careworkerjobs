@@ -1897,7 +1897,7 @@ class WebsiteController extends Controller
                 $location = $row[2];
                  $city = explode(',', $location)[0];
                           
-                 $deadlineString = $row[4]; // Adjust this to the correct index
+                 $deadlineString = $row[3]; // Adjust this to the correct index
 
                 $deadline = str_replace('Closing on: ', '', $deadlineString);
                 $state = $row[3];
