@@ -1524,7 +1524,7 @@ class WebsiteController extends Controller
 
     public function salvationarmy()
     {
-        // dd('no need');
+        dd('no need');
         ini_set('max_execution_time', 30000000000); // Set to 5 minutes
     
 
@@ -1705,7 +1705,7 @@ class WebsiteController extends Controller
     
     public function anglicare()
     {
-        // dd('no need');   
+        dd('no need');   
         // ini_set('max_execution_time', 300000); // Set to 5 minutes
     
 
@@ -2065,7 +2065,7 @@ class WebsiteController extends Controller
       
     }
 
-    
+
 
     public function resthaven(){
 
