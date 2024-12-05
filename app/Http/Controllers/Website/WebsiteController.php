@@ -1334,7 +1334,7 @@ class WebsiteController extends Controller
 
     public function scrapeJobs()
     {
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 300000); // Set to 5 minutes
     
 
@@ -1522,11 +1522,9 @@ class WebsiteController extends Controller
     }
 
 
-
-
     public function salvationarmy()
     {
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 30000000000); // Set to 5 minutes
     
 
@@ -1576,7 +1574,11 @@ class WebsiteController extends Controller
        
         foreach ($jobs as $link) {
            
-           
+            $url = $link['url'];
+                $existingJob = Job::where('apply_url', $url)->first();
+                if ($existingJob) {
+                    continue;
+                }
                    
                 $stateAbbr = $link['state'];
                 if ($stateAbbr) {
@@ -1626,11 +1628,7 @@ class WebsiteController extends Controller
             }
             
                 $client = new Client();
-                $url = $link['url'];
-                $existingJob = Job::where('apply_url', $url)->first();
-                if ($existingJob) {
-                    continue;
-                }
+               
                 $crawler = $client->request('GET', $url);
            
                 // Extract the JSON-LD script data
@@ -1707,7 +1705,7 @@ class WebsiteController extends Controller
     
     public function anglicare()
     {
-        dd('no need');   
+        // dd('no need');   
         // ini_set('max_execution_time', 300000); // Set to 5 minutes
     
 
@@ -1755,7 +1753,14 @@ class WebsiteController extends Controller
         foreach ($jobs as $link) {
         
                 $location =  $link['location'];
-               
+                $url = $link['url'];
+
+                $applyUrl = $url;
+                // Check if the job already exists
+                $existingJob = Job::where('apply_url', $applyUrl)->first();
+                if ($existingJob) {
+                    continue; // Skip processing this job
+                }
                 $client = new ClientC();
                 $nominatimUrl = 'https://nominatim.openstreetmap.org/search';
                 $nominatimResponse = $client->get($nominatimUrl, [
@@ -1786,7 +1791,6 @@ class WebsiteController extends Controller
          
             
                     $client = new Client();
-                    $url = $link['url'];
                     $crawler = $client->request('GET', $url);
             
                     // Extract the JSON-LD script data
@@ -1800,7 +1804,7 @@ class WebsiteController extends Controller
                     $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
                   
                     $deadline = $jobData['validThrough'] ?? '2024-11-30';
-                    $applyUrl = $url;
+                   
                     $description = $jobData['description'] ?? null;
 
 
@@ -1814,12 +1818,7 @@ class WebsiteController extends Controller
                     }else{
                         $sId = 3909;
                     }
-
-                       // Check if the job already exists
-                    $existingJob = Job::where('apply_url', $applyUrl)->first();
-                    if ($existingJob) {
-                        continue; // Skip processing this job
-                    }
+                 
                     // Map to job creation form
                     $jobRequest = [
                         'title' => $title,
@@ -1881,7 +1880,7 @@ class WebsiteController extends Controller
     
     public function svha(){
 
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
 
@@ -2066,9 +2065,11 @@ class WebsiteController extends Controller
       
     }
 
+    
+
     public function resthaven(){
 
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
 
@@ -2247,7 +2248,7 @@ class WebsiteController extends Controller
 
     public function AustralianUnity(){
 
-        dd('no need');
+        // dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
 
