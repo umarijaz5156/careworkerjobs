@@ -1448,7 +1448,7 @@ class WebsiteController extends Controller
                     $companyName = $jobData['hiringOrganization']['name'] ?? 'salvationarmy';
                     $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
                   
-                    $deadline = $jobData['validThrough'] ?? '2024-11-30';
+                    $deadline = $jobData['validThrough'] ?? Carbon::now()->addWeeks(4)->format('Y-m-d');;
                     $applyUrl = $url;
                     $description = $jobData['description'] ?? null;
 
@@ -1610,7 +1610,7 @@ class WebsiteController extends Controller
                     $companyName = $jobData['hiringOrganization']['name'] ?? 'Anglicare';
                     $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
                   
-                    $deadline = $jobData['validThrough'] ?? '2024-11-30';
+                    $deadline = $jobData['validThrough'] ?? Carbon::now()->addWeeks(4)->format('Y-m-d');;
                    
                     $description = $jobData['description'] ?? null;
 
@@ -1699,40 +1699,40 @@ class WebsiteController extends Controller
         
         // Map through the rows (excluding the first row), and extract URL and location
         $jobs = $sheetData->slice(1)->map(function ($row) {
+            // Extract location and city
+            $location = $row[2];
+            $city = explode(',', $location)[0]; // Extract city before the comma
             
-         
-                $location = $row[2];
-                 $city = explode(',', $location)[0];
-                          
-                 $deadlineString = $row[3]; // Adjust this to the correct index
-
-                $deadline = str_replace('Closing on: ', '', $deadlineString);
-                $state = $row[3];
-
-                $stateMap = [
-                    'QLD' => 'Queensland',
-                    'ACT' => 'Australian Capital Territory',
-                    'NSW' => 'New South Wales',
-                    'SA'  => 'South Australia',
-                    'TAS' => 'Tasmania',
-                    'VIC' => 'Victoria',
-                    'WA'  => 'Western Australia',
-                    'NT'  => 'Northern Territory',
-                ];
-
-                $fullState = $stateMap[$state] ?? 'Australian Capital Territory';
-
-                return [
-                    'location' => $location,
-                    'job_title' => $row[0],
-                    'url' => $row[1],
-                    'city' => $city,
-                    'deadline' => $deadline,
-                    'state' => $fullState,
-                ];         
+            // Extract deadline string and format it
+            $deadlineString = $row[3]; // Ensure the correct index for the closing date
+            $deadline = str_replace('Closing Date: ', '', $deadlineString); // Remove the prefix
             
+            // Extract state abbreviation
+            $stateAbbreviation = explode(' - ', $location)[0]; // Get state abbreviation from the location
+            
+            // Map state abbreviation to full state name
+            $stateMap = [
+                'QLD' => 'Queensland',
+                'ACT' => 'Australian Capital Territory',
+                'NSW' => 'New South Wales',
+                'SA'  => 'South Australia',
+                'TAS' => 'Tasmania',
+                'VIC' => 'Victoria',
+                'WA'  => 'Western Australia',
+                'NT'  => 'Northern Territory',
+            ];
+            $fullState = $stateMap[$stateAbbreviation] ?? 'New South Wales'; // Default to 'Unknown State' if not found
+        
+            return [
+                'location' => $location, // Full location
+                'job_title' => $row[0], // Job title
+                'url' => trim($row[1]), // URL, trim to remove unnecessary spaces or newlines
+                'city' => $city, // Extracted city
+                'deadline' => $deadline, // Closing date
+                'state' => $fullState, // Full state name
+            ];
         });
-
+        
     
         foreach ($jobs as $link) {
            
@@ -1798,7 +1798,7 @@ class WebsiteController extends Controller
                 $companyName = $jobData['hiringOrganization']['name'] ?? 'St Vincents Care Services';
                 $locationNear = $jobData['jobLocation']['address']['addressLocality'] ?? 'Australia';
               
-                $deadline = $jobData['validThrough'] ?? '2024-11-30';
+                $deadline = $jobData['validThrough'] ?? Carbon::now()->addWeeks(4)->format('Y-m-d');
                 $applyUrl = $url;
                 $description = $jobData['description'] ?? null;
 
@@ -1979,7 +1979,7 @@ class WebsiteController extends Controller
                 // Format the deadline date to a valid format, or use a default if missing
                 $deadline = isset($jobData['validThrough']) 
                     ? Carbon::parse($jobData['validThrough'])->format('Y-m-d') 
-                    : '2024-11-30';
+                    : Carbon::now()->addWeeks(4)->format('Y-m-d');
 
                 $applyUrl = $url;  // URL from the initial crawl
 
@@ -1987,7 +1987,7 @@ class WebsiteController extends Controller
                     try {
                         $formattedDeadline = Carbon::parse($deadline)->format('Y-m-d');
                     } catch (\Exception $e) {
-                        $formattedDeadline = '2024-11-25'; // Default date
+                        $formattedDeadline = Carbon::now()->addWeeks(4)->format('Y-m-d'); // Default date
                     }
 
                     // Map to job creation form
@@ -2168,7 +2168,7 @@ class WebsiteController extends Controller
                     try {
                         $formattedDeadline = Carbon::parse($deadline)->format('Y-m-d');
                     } catch (\Exception $e) {
-                        $formattedDeadline = '2024-11-25'; // Default date
+                        $formattedDeadline = Carbon::now()->addWeeks(4)->format('Y-m-d'); // Default date
                     }
 
                     // Map to job creation form
