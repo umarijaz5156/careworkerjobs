@@ -1506,7 +1506,7 @@ class WebsiteController extends Controller
            
         }
     
-        dd('all done');
+        dd(count($allJobs));
        
     }
     
@@ -1680,7 +1680,7 @@ class WebsiteController extends Controller
            
         }
     
-        dd('all done');
+        dd(count($allJobs));
        
     }
     
@@ -1864,7 +1864,7 @@ class WebsiteController extends Controller
                     $allJobs[] = $jobRequest;
            
         }
-        dd('all done');
+        dd(count($allJobs));
 
        
         // Output or return the array of all jobs
@@ -2043,7 +2043,7 @@ class WebsiteController extends Controller
                     $allJobs[] = $jobRequest;
            
         }
-        dd('all done');
+        dd(count($allJobs));
 
        
         // Output or return the array of all jobs
@@ -2225,7 +2225,7 @@ class WebsiteController extends Controller
                     $allJobs[] = $jobRequest;
            
         }
-        dd('all done');
+        dd(count($allJobs));
 
        
         // Output or return the array of all jobs
