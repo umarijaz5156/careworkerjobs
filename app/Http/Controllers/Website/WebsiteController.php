@@ -2096,7 +2096,6 @@ class WebsiteController extends Controller
             ];
         });
 
-        dd($jobs);
     
         foreach ($jobs as $link) {
            
