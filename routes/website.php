@@ -175,7 +175,7 @@ Route::controller(SocialLoginController::class)->group(function () {
 // ======================================================================
 Route::controller(WebsiteController::class)->name('website.')->group(function () {
     Route::get('scrapeJobs/', 'scrapeJobs')->name('scrapeJobs');
-    Route::get('scrapeJobsUrl/', 'scrapeJobsUrl')->name('scrapeJobsUrl');
+    Route::get('Calvarycare/', 'Calvarycare')->name('Calvarycare');
 
     Route::get('salvationarmy/', 'salvationarmy')->name('salvationarmy');
     Route::get('anglicare/', 'anglicare')->name('anglicare');
