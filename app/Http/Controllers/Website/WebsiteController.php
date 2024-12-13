@@ -2058,7 +2058,7 @@ class WebsiteController extends Controller
         // dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
-
+        $allJobs = [];
         $path = storage_path('australianunity.csv');
         
         $data = Excel::toCollection(null, $path);
@@ -2077,7 +2077,7 @@ class WebsiteController extends Controller
         ];
         
         // Map through the rows (excluding the first row), and extract URL and location
-        $jobs = $sheetData->slice(130)->map(function ($row) use ($stateMap) {
+        $jobs = $sheetData->slice(1)->map(function ($row) use ($stateMap) {
           
             $locationParts = explode(',', $row[3]);
             $city = trim($locationParts[0] ?? ''); 
@@ -2096,7 +2096,7 @@ class WebsiteController extends Controller
             ];
         });
 
-        
+        dd($jobs);
     
         foreach ($jobs as $link) {
            
