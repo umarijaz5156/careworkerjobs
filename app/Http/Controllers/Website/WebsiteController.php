@@ -1169,9 +1169,17 @@ class WebsiteController extends Controller
                 $location = $row[2];
                  $city = explode(',', $location)[0];
                           
-                 $deadlineString = $row[6]; // Adjust this to the correct index
+                 $deadlineString = $row[6] ?? '';
+                if (empty($deadlineString) || !str_contains($deadlineString, 'Closing on:')) {
+                    $deadlineString = $row[7] ?? '';
+                }
 
-                $deadline = str_replace('Closing on: ', '', $deadlineString);
+                if (empty($deadlineString) || !str_contains($deadlineString, 'Closing on:')) {
+                    $deadline = Carbon::now()->addWeeks(4)->format('M d Y');
+                } else {
+                    $deadline = str_replace('Closing on: ', '', $deadlineString);
+                }
+
                 $state = $row[3];
 
                 $stateMap = [
@@ -1335,38 +1343,7 @@ class WebsiteController extends Controller
         ini_set('max_execution_time', 30000000000); // Set to 5 minutes
     
 
-        $path = storage_path('salvationarmy.csv');
-        
-        $data = Excel::toCollection(null, $path);
-        
-        $sheetData = $data->first();
-        
-        $jobs = $sheetData->slice(1)->map(function ($row) {
-                
-            $title = $row[0];
-            $locationParts = explode('|', $row[2]);
-
-            $locationString = trim($locationParts[1]); 
-        
-           
-            $locationString = str_replace('Australia', '', $locationString);
-           
-            $cityStateParts = explode(',', $locationString);
-            
-            $city = trim($cityStateParts[0]);
-            $stateAbbrev = trim($cityStateParts[1] ?? 'NSW');
-
-            $state = $stateMap[$stateAbbrev] ?? 'NSW'; 
-        
-            return [
-                'state' => $state,
-                'city' => $city,
-                'url' => trim($row[1]),
-                'title' => $title,
-            ];
-        });
-
-    
+      
         $stateMap = [
             'QLD' => 'Queensland',
             'ACT' => 'Australian Capital Territory',
@@ -1378,6 +1355,42 @@ class WebsiteController extends Controller
             'NT'  => 'Northern Territory',
         ];
     
+        // Paths to both CSV files
+        $path1 = storage_path('salvationarmy.csv');
+        $path2 = storage_path('salvationarmy2.csv'); // Replace with your second CSV filename
+    
+        // Load data from both files
+        $data1 = Excel::toCollection(null, $path1);
+        $data2 = Excel::toCollection(null, $path2);
+    
+        // Get the first sheets from both files
+        $sheetData1 = $data1->first();
+        $sheetData2 = $data2->first();
+    
+        // Merge the sheets into a single collection
+        $mergedSheetData = $sheetData1->merge($sheetData2);
+    
+        // Process the merged data
+        $jobs = $mergedSheetData->slice(1)->map(function ($row) use ($stateMap) {
+            $title = $row[0];
+            $locationParts = explode('|', $row[2]);
+    
+            $locationString = trim($locationParts[1] ?? 'Unknown');
+            $locationString = str_replace('Australia', '', $locationString);
+    
+            $cityStateParts = explode(',', $locationString);
+            $city = trim($cityStateParts[0] ?? 'Unknown');
+            $stateAbbrev = trim($cityStateParts[1] ?? 'NSW');
+    
+            $state = $stateMap[$stateAbbrev] ?? 'New South Wales';
+    
+            return [
+                'state' => $state,
+                'city' => $city,
+                'url' => trim($row[1] ?? ''),
+                'title' => $title,
+            ];
+        });
        
         foreach ($jobs as $link) {
            
@@ -1513,7 +1526,7 @@ class WebsiteController extends Controller
     public function anglicare()
     {
         // dd('no need');   
-        // ini_set('max_execution_time', 300000); // Set to 5 minutes
+        ini_set('max_execution_time', 300000); // Set to 5 minutes
     
 
         $path = storage_path('anglicare.csv');
