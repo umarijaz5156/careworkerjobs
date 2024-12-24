@@ -1451,8 +1451,13 @@ class WebsiteController extends Controller
                
                 $crawler = $client->request('GET', $url);
            
-                // Extract the JSON-LD script data
-                $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first()->html();
+                $jsonLdScript = $crawler->filter('script[type="application/ld+json"]')->first();
+                if ($jsonLdScript->count() > 0) {
+                   
+                    $jsonLdScript = $jsonLdScript->html();
+                } else {
+                    continue;
+                }
                
                 $jobData = json_decode($jsonLdScript, true);
 
