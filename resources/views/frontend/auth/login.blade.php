@@ -194,8 +194,10 @@
         <div class="auth-right-sidebar r-z order-1 order-lg-0">
             <div class="sidebar-bg" style="background-image: url({{ asset($cms_setting->login_page_image) }})">
                 <div class="sidebar-content">
-                    <h4 class="text-gray-10 rt-mb-50">{{ openJobs() }} {{ __('open_jobs_waiting_for_you') }}</h4>
-                    <div class="d-flex">
+                    <h4 class="text-gray-10 rt-mb-50">
+                        {{ companies() }} {{ __('companies have jobs waiting for you') }}
+                    </h4>
+                                        <div class="d-flex">
                         <div class="flex-grow-1 rt-mb-24">
                             <div class="card jobcardStyle1 counterbox4">
                                 <div class="card-body">
