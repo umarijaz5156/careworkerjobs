@@ -1394,7 +1394,7 @@ class WebsiteController extends Controller
        
         foreach ($jobs as $link) {
            
-            $url = $link['url'];
+                $url = $link['url'];
                 $existingJob = Job::where('apply_url', $url)->first();
                 if ($existingJob) {
                     continue;
