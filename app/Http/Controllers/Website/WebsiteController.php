@@ -1206,7 +1206,7 @@ class WebsiteController extends Controller
             
         });
 
-      
+     
         // Loop through each link
         foreach ($jobs as $link) {
             $url = $link['url'];

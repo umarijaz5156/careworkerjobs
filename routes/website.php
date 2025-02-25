@@ -180,14 +180,11 @@ Route::controller(SocialLoginController::class)->group(function () {
 // =============================Guest Routes=============================
 // ======================================================================
 Route::controller(WebsiteController::class)->name('website.')->group(function () {
-    Route::get('scrapeJobs/', 'scrapeJobs')->name('scrapeJobs');
     Route::get('Calvarycare/', 'Calvarycare')->name('Calvarycare');
-
     Route::get('salvationarmy/', 'salvationarmy')->name('salvationarmy');
     Route::get('anglicare/', 'anglicare')->name('anglicare');
     Route::get('svha/', 'svha')->name('svha');
     Route::get('resthaven/', 'resthaven')->name('resthaven');
-    // Route::get('resthaven/', 'resthaven')->name('resthaven');
     Route::get('AustralianUnity/', 'AustralianUnity')->name('AustralianUnity');
 
     
