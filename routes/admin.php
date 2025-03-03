@@ -61,7 +61,9 @@ Route::prefix('admin')->group(function () {
     });
 
 
-   
+    Route::post('/send-email', [CompanyController::class, 'sendEmail'])->name('send.email');
+    Route::get('/send-email-test', [CompanyController::class, 'sendEmail'])->name('send.email.test');
+
     Route::middleware(['auth:admin'])->group(function () {
         //Dashboard Route
         Route::get('/', [AdminController::class, 'dashboard']);
@@ -94,9 +96,7 @@ Route::prefix('admin')->group(function () {
 
         
         Route::get('/company/report/{id}', [CompanyController::class, 'reportCompany'])->name('company.report');
-        Route::post('/send-email', [CompanyController::class, 'sendEmail'])->name('send.email');
-        Route::get('/send-email-test', [CompanyController::class, 'sendEmail'])->name('send.email.test');
-
+     
         
             Route::get('/feature/companies', [CompanyController::class, 'featureCompany'])->name('admin.feature.company');
             Route::post('/company/update-featured', [CompanyController::class, 'updateFeaturedC'])->name('company.updateFeatured');
