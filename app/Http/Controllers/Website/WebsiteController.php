@@ -1159,7 +1159,8 @@ class WebsiteController extends Controller
         $path = storage_path('calvarycare.csv');
         
         $data = Excel::toCollection(null, $path);
-        
+        $allJobs = [];
+
         $sheetData = $data->first();
         
         // Map through the rows (excluding the first row), and extract URL and location
@@ -1342,6 +1343,7 @@ class WebsiteController extends Controller
         // dd('no need');
         ini_set('max_execution_time', 30000000000); // Set to 5 minutes
     
+        $allJobs = [];
 
       
         $stateMap = [
@@ -1532,7 +1534,8 @@ class WebsiteController extends Controller
     {
         // dd('no need');   
         ini_set('max_execution_time', 300000); // Set to 5 minutes
-    
+        $allJobs = [];
+
 
         $path = storage_path('anglicare.csv');
         
@@ -1708,6 +1711,7 @@ class WebsiteController extends Controller
         // dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
+        $allJobs = [];
 
         $path = storage_path('svha.csv');
         
@@ -1897,6 +1901,7 @@ class WebsiteController extends Controller
         // dd('no need');
         ini_set('max_execution_time', 300000000); // Set to 5 minutes
     
+        $allJobs = [];
 
         $path = storage_path('resthaven.csv');
         
